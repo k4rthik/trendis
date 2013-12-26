@@ -4,9 +4,9 @@ TreNdis
 A simple and experimental code to compute trends on any data
 
 * Uses redis hashes to store keywords, redis sorted-set to store/get
-  trending topics which makes the data insertion process to be
+  trending topics which helps the data insertion process to be
   distributed, fast. But the trends are computed by iterating over all the
-  available keywords. Yet to benchmark this will start becoming too slow.
+  available keywords. Yet to benchmark the amount of data at which this will start being slow.
   ( trends are supposed to be as close to real time as possible )
 * Currently uses slope of the
   [least squares fitting](http://mathworld.wolfram.com/LeastSquaresFitting.html)
