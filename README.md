@@ -1,28 +1,7 @@
 TreNdis
 =======
 
-A simple and experimental code to compute trends on any data
-
-* Uses redis hashes to store keywords, redis sorted-set to store/get
-  trending topics which helps the data insertion process to be
-  distributed, fast. But the trends are computed by iterating over all the
-  available keywords. Yet to benchmark the amount of data at which this will start being slow.
-  ( trends are supposed to be as close to real time as possible )
-* Currently uses slope of the
-  [least squares fitting](http://mathworld.wolfram.com/LeastSquaresFitting.html)
-  line over data points to compute score.
-* Maintains a seperate namespace for each kind of data
-
-#####Stream and Insert data:
-* There is an example script which fetches data from twitter using
-  streaming api, applies filters to remove commonly used English words
-  ( forked from
-  [here](https://code.google.com/p/twitter-sentiment-analysis/source/browse/trunk/files/stopwords.txt) ), 1-2 character words and inserts the tokens.
-*  The quality of the trending topics will be highly dependent on how the
-  data is filtered before inserting
-
-#####Compute and view trends:
-* trendis-cli can be used to compute and view the trends. 'trendis-cli --help' will be helpful
+A simple and experimental tool/library to compute trends on any data
 
 ####Install
 
@@ -30,3 +9,52 @@ From the directory:
 ```
 sudo python setup.py install
 ```
+
+#### How to use
+
+``` 
+# Insert tokens from any stream of data 
+# ex: parsed periodic log on multiple boxes. 
+# on each box, each minute, run
+
+>>> from trendis import Trendis
+>>> trends = Trendis(namespace=sample, host=redis-host, port=6379)
+>>> words = []
+>>> for word in my_stream_for_this_minute:
+.>>>    if word.startswith("P1_"):
+.>>>        words.append((word, 2))
+.>>>    else:
+.>>>        words.append((word, 1))
+.>>> trends.insert(*words)
+
+# from command line
+$ trendis-cli --namespace="sample" --host="redis-host" --port=6379
+```
+* Fast - Everything is in memory and will be removed if expired when unused.
+* Tries to identify topics that are becoming popular rather than the
+  ones that have been popular for while. Currently uses slope of the
+  [least squares fitting](http://mathworld.wolfram.com/LeastSquaresFitting.html)
+  line over data points to compute score.
+* Though the data insertion is fast, the trends are computed by iterating over all the
+  available keywords and isn't very fast. For 50,000 keys it took 
+  around 30-35 seconds to compute the trends linearly. So with millions of keys this might
+  not scale well.
+* Maintains a seperate namespace for each kind of data.
+
+#####Stream and Insert data:
+
+* There is an example script which fetches sample data from twitter
+  using [streaming api](https://dev.twitter.com/docs/api/1.1/get/statuses/sample), applies filters to remove commonly used words
+  ( forked from
+  [here](https://code.google.com/p/twitter-sentiment-analysis/source/browse/trunk/files/stopwords.txt)
+  ), <=3 character words and inserts the tokens.
+* Number of buckets, time slot of each bucket can be tuned. Used last 2 hours of data counted per minute.
+* The results were not so good in the beginning but slowly started
+  getting better.
+* The quality of the trending topics will be highly dependent on how the
+  data is filtered before inserting. Better stop words, scoring should
+  make it much better.
+
+#####Compute and view trends:
+* trendis-cli can be used to compute and view the trends. 'trendis-cli --help' will be helpful
+
