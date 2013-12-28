@@ -12,8 +12,11 @@ trendis-cli --help should be pretty helpful
 
 
 def pretty_print(last_computed, trends):
-    print "computed at " + last_computed
-    print trends
+    if last_computed:
+        print "computed at " + last_computed
+    for trend in trends:
+        trend = trend.decode("utf-8")
+        print trend
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(

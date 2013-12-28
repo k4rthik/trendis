@@ -31,7 +31,6 @@ class Trendis(object):
 
     def insert(self, *tokens):
         "add one or more word,weight"
-        print tokens
         redis_con = self.__redis_con()
         for word, wt in tokens:
             #why not lists? because incrementing/managing fields concurrently
