@@ -30,7 +30,7 @@ sudo python setup.py install
 # from command line
 $ trendis-cli --namespace="sample" --host="redis-host" --port=6379
 ```
-* Fast - Everything is in memory and will be removed if expired when unused.
+* Fast - Everything is in memory and will be expired if unused.
 * Tries to identify topics that are becoming popular rather than the
   ones that have been popular for while. Currently uses slope of the
   [least squares fitting](http://mathworld.wolfram.com/LeastSquaresFitting.html)
