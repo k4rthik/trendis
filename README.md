@@ -1,7 +1,7 @@
 TreNdis
 =======
 
-A simple and experimental tool/library to compute trends on any data
+A simple and experimental tool/library to compute trends on any data. I was reading [this](http://highscalability.com/blog/2011/7/6/11-common-web-use-cases-solved-in-redis.html) article and thought I should try to solve this problem using Redis. I think it's a good tool for this job.
 
 ####Install
 
@@ -35,11 +35,10 @@ $ trendis-cli --namespace="sample" --host="redis-host" --port=6379
   ones that have been popular for while. Currently uses slope of the
   [least squares fitting](http://mathworld.wolfram.com/LeastSquaresFitting.html)
   line over data points to compute score.
-* Though the data insertion is fast, the trends are computed by iterating over all the
-  available keywords and isn't very fast. For 50,000 keys it took 
-  around 30-35 seconds to compute the trends linearly. So with millions of keys this might
-  not scale well.
-* Maintains a seperate namespace for each kind of data.
+* Though inserting and storing the data is fast, the trends are currently computed by iterating over all the
+  available keywords and it's not very fast. For 50,000 keys it took 
+  around 30-35 seconds. This can also be easily distributed across machines (like compute [a-m]\*,[n-z]\* on 2 boxes)
+* Allows seperate namespaces for each kind of job.
 
 #####Stream and Insert data:
 
